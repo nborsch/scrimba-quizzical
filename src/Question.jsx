@@ -1,12 +1,16 @@
 export default function Question(props){
   if(props) {
+
+    const buttonsEls = props.answers.map((answer, index) => {
+      return answer.isRight ?
+        <button key={index} className='answer selected'>{answer.answer}</button> :
+        <button key={index} className='answer'>{answer.answer}</button>
+    })
+
     return (<>
         <p className='question'>{props.question}</p>
         <div className='answers'>
-        <button className='answer selected'>{props.rightAnswer}</button>
-        <button className='answer'>{props.wrongAnswers[0]}</button>
-        <button className='answer'>{props.wrongAnswers[1]}</button>
-        <button className='answer'>{props.wrongAnswers[2]}</button>
+        {buttonsEls}
         </div>
         <hr></hr>
     </>)

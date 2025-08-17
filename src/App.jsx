@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import arrayShuffle from 'array-shuffle'
+import { nanoid } from 'nanoid'
 import './App.css'
 import Question from './Question'
 
@@ -52,11 +54,26 @@ function App() {
   }
 
   const questionsEls = questions.map(question => {
+    const id = nanoid()
+    
+    let answers = question.incorrect_answers.map(answer => ({
+      answer,
+      isRight: false
+    }))
+
+    answers.push({
+      answer: question.correct_answer,
+      isRight: true
+    })
+
+    answers = arrayShuffle(answers)
+
     return (
       <Question 
+        key={id}
+        id={id}
         question={question.question}
-        rightAnswer={question.correct_answer}
-        wrongAnswers={question.incorrect_answers}
+        answers={answers}
       />
     )
   })
