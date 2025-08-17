@@ -60,7 +60,6 @@ function App() {
       />
     )
   })
-  
 
   return (
     <main className={initialScreen ? 'initial' : 'game'}>
