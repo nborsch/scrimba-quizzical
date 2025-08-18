@@ -15,8 +15,31 @@ function App() {
     async function getQuestions(){
       const res = await fetch('https://opentdb.com/api.php?amount=5')
       const data = await res.json()
+      // mapeando o array original de objetos de qanda
+      // tem que retornar um objeto de qanda
+      const newData = data.results.map(qanda => {
+          // for each qanda, map wrong answers
+          const answers = qanda.incorrect_answers.map(incAnswer => {
+            return {
+              answer: incAnswer,
+              isRight: false
+            }
+          })
+          // push right answer
+          answers.push({
+            answer: qanda.correct_answer,
+            isRight: true
+          })
+          // shuffle answers 
+          const shuffledAnswers = arrayShuffle(answers)
+        // return updated qanda object
+        return {
+          question: qanda.question,
+          answers: shuffledAnswers
+        }
+      })
 
-      setQuestions(data.results)
+      setQuestions(newData)
     }
 
     !initialScreen && !score ? getQuestions() : null
@@ -53,27 +76,15 @@ function App() {
       finished : null
   }
 
-  const questionsEls = questions.map(question => {
+  const questionsEls = questions.map(qanda => {
     const id = nanoid()
-    
-    let answers = question.incorrect_answers.map(answer => ({
-      answer,
-      isRight: false
-    }))
-
-    answers.push({
-      answer: question.correct_answer,
-      isRight: true
-    })
-
-    answers = arrayShuffle(answers)
 
     return (
       <Question 
         key={id}
         id={id}
-        question={question.question}
-        answers={answers}
+        question={qanda.question}
+        answers={qanda.answers}
       />
     )
   })
