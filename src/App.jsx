@@ -9,30 +9,33 @@ function App() {
   const [score, setScore] = useState(false)
   const [questions, setQuestions] = useState([])
 
-  const checkAnswers = () => {
-    setScore(true)
-    
-  }
+  const checkAnswers = () => setScore(true)
 
   useEffect(() => {
-    async function getQuestions(){
+    async function getQuestions() {
       const res = await fetch('https://opentdb.com/api.php?amount=5')
       const data = await res.json()
-      const newData = data.results.map(qanda => {
-          const answers = qanda.incorrect_answers.map(incAnswer => {
-            return {
-              answer: incAnswer,
-              isRight: false
-            }
-          })
-          answers.push({
-            answer: qanda.correct_answer,
-            isRight: true
-          })
-          const shuffledAnswers = arrayShuffle(answers)
+      const newData = data.results.map((qanda) => {
+        const id = nanoid()
+
+        const answers = qanda.incorrect_answers.map((incAnswer) => {
+          return {
+            answer: incAnswer,
+            isRight: false,
+            isSelected: false,
+          }
+        })
+        answers.push({
+          answer: qanda.correct_answer,
+          isRight: true,
+          isSelected: false,
+        })
+        const shuffledAnswers = arrayShuffle(answers)
+
         return {
           question: qanda.question,
-          answers: shuffledAnswers
+          answers: shuffledAnswers,
+          id,
         }
       })
 
@@ -48,58 +51,80 @@ function App() {
     setQuestions([])
   }
 
-  const initialScreenContent = <>
-    <h1>Quizzical</h1>
-    <p>A game for all of us</p>
-    <button onClick={newGame}>Start quiz</button>
-  </>
+  const initialScreenContent = (
+    <>
+      <h1>Quizzical</h1>
+      <p>A game for all of us</p>
+      <button onClick={newGame}>Start quiz</button>
+    </>
+  )
 
   const scoreSection = () => {
     const ongoing = (
-      <button onClick={checkAnswers} className='check'>
+      <button onClick={checkAnswers} className="check">
         Check answers
       </button>
     )
 
-    const finished = (<>
+    const finished = (
+      <>
         <p>You scored 3/5 correct answers</p>
-        <button onClick={newGame} className='check'>
+        <button onClick={newGame} className="check">
           Play again
         </button>
-    </>)
+      </>
+    )
     // if game is ongoing or has finished
-    return !initialScreen && !score ?
-      ongoing : !initialScreen && score ?
-      finished : null
+    return !initialScreen && !score
+      ? ongoing
+      : !initialScreen && score
+      ? finished
+      : null
   }
 
-  const questionsEls = questions && questions.map(qanda => {
-    const id = nanoid()
+  const toggleSelectAnswer = (id, index) => {
+    const newQuestions = questions.map(qAndA => {
+      const qAndAId = qAndA.id
+      const answers = [...qAndA.answers]
 
-    return (
-      <Question 
-        key={id}
-        id={id}
-        question={qanda.question}
-        answers={qanda.answers}
-        score={score}
-      />
-    )
-  })
+      if (qAndAId !== id) return qAndA
+      
+      // flip answers[index].isSelected for this qAndA?
+      answers[index].isSelected = !answers[index].isSelected
+
+      return qAndA
+    })
+    console.log(newQuestions)
+    setQuestions(newQuestions)
+  }
+
+  const questionsEls =
+    questions &&
+    questions.map((qanda) => {
+      return (
+        <Question
+          key={qanda.id}
+          id={qanda.id}
+          question={qanda.question}
+          answers={qanda.answers}
+          score={score}
+          isSelected={qanda.isSelected}
+          onClick={toggleSelectAnswer}
+        />
+      )
+    })
 
   return (
     <main className={initialScreen ? 'initial' : 'game'}>
-      {initialScreen ? initialScreenContent : 
-      <>
-        <section className='qs-and-as'>
-          {questionsEls}
-        </section>
+      {initialScreen ? (
+        initialScreenContent
+      ) : (
+        <>
+          <section className="qs-and-as">{questionsEls}</section>
 
-        <section className='status'>
-          {scoreSection()}
-        </section>     
-      </>
-      }
+          <section className="status">{scoreSection()}</section>
+        </>
+      )}
     </main>
   )
 }
