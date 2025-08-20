@@ -9,6 +9,7 @@ function App() {
   const [initialScreen, setInitialScreen] = useState(true)
   const [score, setScore] = useState(0)
   const [questions, setQuestions] = useState([])
+  const [loading, setLoading] = useState(null)
 
   const checkAnswers = () => {
     let count = 0
@@ -22,8 +23,10 @@ function App() {
 
   useEffect(() => {
     async function getQuestions() {
+      setLoading(true)
       const res = await fetch('https://opentdb.com/api.php?amount=5')
       const data = await res.json()
+      setLoading(false)
       const newData = data.results.map((qanda) => {
         const id = nanoid()
 
@@ -111,21 +114,27 @@ function App() {
     setQuestions(newQuestions)
   }
 
-  const questionsEls =
-    questions &&
-    questions.map((qanda) => {
-      return (
-        <Question
-          key={qanda.id}
-          id={qanda.id}
-          question={qanda.question}
-          answers={qanda.answers}
-          score={score}
-          isSelected={qanda.isSelected}
-          onClick={toggleSelectAnswer}
-        />
-      )
-    })
+  const questionsEls = () => {
+    if (loading) {
+      return <p>Loading...</p>
+    } else {
+      return questions.map((qanda) => {
+        return (
+          <Question
+            key={qanda.id}
+            id={qanda.id}
+            question={qanda.question}
+            answers={qanda.answers}
+            score={score}
+            isSelected={qanda.isSelected}
+            onClick={toggleSelectAnswer}
+          />
+        )
+      })
+    }
+  }
+
+    
 
   return (
     <main className={initialScreen ? 'initial' : 'game'}>
@@ -133,7 +142,7 @@ function App() {
         initialScreenContent
       ) : (
         <>
-          <section className="qs-and-as">{questionsEls}</section>
+          <section className="qs-and-as">{questionsEls()}</section>
 
           <section className="status">{scoreSection()}</section>
         </>
