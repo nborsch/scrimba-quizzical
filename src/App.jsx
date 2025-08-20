@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import arrayShuffle from 'array-shuffle'
 import { nanoid } from 'nanoid'
+import he from 'he'
 import './App.css'
 import Question from './Question'
 
@@ -20,20 +21,20 @@ function App() {
 
         const answers = qanda.incorrect_answers.map((incAnswer) => {
           return {
-            answer: incAnswer,
+            answer: he.decode(incAnswer),
             isRight: false,
             isSelected: false,
           }
         })
         answers.push({
-          answer: qanda.correct_answer,
+          answer: he.decode(qanda.correct_answer),
           isRight: true,
           isSelected: false,
         })
         const shuffledAnswers = arrayShuffle(answers)
 
         return {
-          question: qanda.question,
+          question: he.decode(qanda.question),
           answers: shuffledAnswers,
           id,
         }
