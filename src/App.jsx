@@ -88,12 +88,16 @@ function App() {
       const answers = [...qAndA.answers]
 
       if (qAndAId !== id) return qAndA
-      //reset all answers isSelected
-      // continue here
-      // flip answers[index].isSelected for this qAndA
-      answers[index].isSelected = !answers[index].isSelected
+      // reset all answers isSelected
+      const resetAnswers = answers.map(answer => ({...answer, isSelected: false}))
 
-      return qAndA
+      // flip answers[index].isSelected for this qAndA
+      resetAnswers[index].isSelected = !resetAnswers[index].isSelected
+
+      return {
+        ...qAndA,
+        answers: resetAnswers
+      }
     })
     setQuestions(newQuestions)
   }
