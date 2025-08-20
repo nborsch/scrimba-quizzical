@@ -88,13 +88,13 @@ function App() {
       const answers = [...qAndA.answers]
 
       if (qAndAId !== id) return qAndA
-      
-      // flip answers[index].isSelected for this qAndA?
+      //reset all answers isSelected
+      // continue here
+      // flip answers[index].isSelected for this qAndA
       answers[index].isSelected = !answers[index].isSelected
 
       return qAndA
     })
-    console.log(newQuestions)
     setQuestions(newQuestions)
   }
 
