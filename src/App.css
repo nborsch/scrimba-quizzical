@@ -94,6 +94,10 @@ button {
   border: none;
 }
 
+.disabled {
+  opacity: 0.3;
+}
+
 hr {
   border: 1px solid #DBDEF0;
   margin: 20px 0 18px;

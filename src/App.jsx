@@ -7,10 +7,18 @@ import Question from './Question'
 
 function App() {
   const [initialScreen, setInitialScreen] = useState(true)
-  const [score, setScore] = useState(false)
+  const [score, setScore] = useState(0)
   const [questions, setQuestions] = useState([])
 
-  const checkAnswers = () => setScore(true)
+  const checkAnswers = () => {
+    let count = 0
+
+    questions.map(qanda => qanda.answers.map(answer => {
+      if (answer.isRight && answer.isSelected) count += 1
+    }))
+
+    setScore(count) // here!
+  }
 
   useEffect(() => {
     async function getQuestions() {
@@ -48,7 +56,7 @@ function App() {
 
   const newGame = () => {
     setInitialScreen(false)
-    setScore(false)
+    setScore(0)
     setQuestions([])
   }
 
@@ -69,7 +77,7 @@ function App() {
 
     const finished = (
       <>
-        <p>You scored 3/5 correct answers</p>
+        <p>You scored {score}/5 correct answers</p>
         <button onClick={newGame} className="check">
           Play again
         </button>
