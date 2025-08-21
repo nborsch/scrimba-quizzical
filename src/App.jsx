@@ -116,7 +116,7 @@ function App() {
 
   const questionsEls = () => {
     if (loading) {
-      return <p>Loading...</p>
+      return <p className='loading'>Loading questions...</p>
     } else {
       return questions.map((qanda) => {
         return (

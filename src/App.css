@@ -52,6 +52,11 @@ button {
   margin: 40px auto 0;
 }
 
+.loading {
+  text-align: center;
+  font-weight: bold;
+}
+
 .check {
   padding: 10px 15px;
   font-size: 14px;
